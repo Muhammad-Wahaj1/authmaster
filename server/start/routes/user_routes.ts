@@ -4,18 +4,21 @@ import { middleware } from '#start/kernel'
 
 
 router.group(() => {
-  router.post('/register', [UsersController, 'store'])     
-  router.post('/login', [UsersController, 'login'])        
+  router.post('/register', [UsersController, 'store'])
+  router.post('/login', [UsersController, 'login'])
+  router.post('/forgot-password', [UsersController, 'forgotPassword'])
+  router.post('/reset-password/:token', [UsersController, 'resetPassword'])
+
 })
   .prefix('/users')
 
 router.group(() => {
-  router.get('/', [UsersController, 'index'])              
-  router.get('/:id', [UsersController, 'show'])            
-  router.put('/:id', [UsersController, 'update'])           
-  router.delete('/:id', [UsersController, 'destroy'])      
+  router.get('/', [UsersController, 'index'])
+  router.get('/:id', [UsersController, 'show'])
+  router.put('/:id', [UsersController, 'update'])
+  router.delete('/:id', [UsersController, 'destroy'])
   router.patch('/password', [UsersController, 'updatePassword'])
-  router.post('/logout', [UsersController, 'logout'])     
+  router.post('/logout', [UsersController, 'logout'])
 })
   .prefix('/users')
   .use(middleware.auth({ guards: ['api'] }))             

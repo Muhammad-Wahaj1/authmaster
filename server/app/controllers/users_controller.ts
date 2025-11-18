@@ -118,4 +118,34 @@ export default class UsersController {
             )
         }
     }
+
+    async forgotPassword({ request, response }: HttpContext) {
+        try {
+            const { email } = request.only(['email'])
+            const { error, error_message, data } = await UserService.forgotpass(email)
+            if (error) {
+                return response.ok(errorResponse({ message: error_message, data }))
+            }
+            return response.ok(successResponse({ message: error_message, data: data }))
+        } catch (err: any) {
+            return response.internalServerError(
+                errorResponse({ message: 'Something went wrong', data: err.message })
+            )
+        }
+    }
+
+    async resetPassword({ params,request, response }: HttpContext) {
+        try {
+            const { password } = request.only(['password'])
+            const { error, error_message, data } = await UserService.resetpass(params.token,password)
+            if (error) {
+                return response.ok(errorResponse({ message: error_message, data }))
+            }
+            return response.ok(successResponse({ message: "Password Reset Successfully", data: data }))
+        } catch (err: any) {
+            return response.internalServerError(
+                errorResponse({ message: 'Something went wrong', data: err.message })
+            )
+        }
+    }
 }

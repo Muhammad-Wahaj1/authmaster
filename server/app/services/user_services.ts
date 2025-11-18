@@ -1,4 +1,8 @@
+import PasswordReset from "#models/password_reset";
 import User from "#models/user"
+import crypto from 'crypto'
+import { DateTime } from "luxon";
+import nodemailer from "nodemailer";
 
 
 export default class UserService {
@@ -139,4 +143,83 @@ export default class UserService {
         await auth.use('api').invalidateToken()
         return { error: false, error_message: '', data: [] }
     }
+
+    static async forgotpass(email: any) {
+        const user = await User.findBy('email', email)
+        const message = 'If the email exists, check your inbox for the reset link'
+        if (!user) {
+            return {
+                error: true,
+                error_message: message,
+                data: []
+            }
+        }
+        const token = crypto.randomBytes(20).toString('hex')
+        const data = await PasswordReset.create({
+            email: email,
+            token: token,
+            expiresAt: DateTime.now().plus({ hours: 1 }),
+            isUsed: false
+        })
+
+
+        const mailer = nodemailer.createTransport({
+            host: 'smtp.ethereal.email',
+            port: 587,
+            auth: {
+                user: 'nella.heidenreich10@ethereal.email',
+                pass: 'PTMKGSecypwcJpJdfm'
+            }
+        });
+        const resetLink = `http://localhost:5173/reset-password/${token}`
+
+        try {
+            await mailer.sendMail({
+                from: '"authMaster" <no-reply@authmaster.com>',
+                to: email,
+                subject: "Reset Your Password",
+                html: `<p>Click to reset your password:</p><a href="${resetLink}">${resetLink}</a>`
+            });
+        } catch (err) {
+            console.error("Mail error:", err);
+        }
+
+        return {
+            error: false,
+            error_message: message,
+            data: data
+        }
+    }
+
+    static async resetpass(token: any, password: any) {
+        const targetUser = await PasswordReset.findBy('token', token)
+        if (!targetUser || targetUser.isUsed || targetUser.expiresAt < DateTime.now()) {
+            return {
+                error: true,
+                error_message: "Not a valid or expire Token",
+                data: []
+            }
+        }
+        const email = targetUser.email
+        const user = await User.findBy('email', email)
+        if (!user) {
+            return {
+                error: true,
+                error_message: "user not found with this associated token",
+                data: []
+            }
+        }
+
+        user.password = password
+        await user.save()
+        targetUser.isUsed = true
+        await targetUser.save()
+        return {
+            error: false,
+            error_message: '',
+            data: []
+        }
+
+    }
 }
+
