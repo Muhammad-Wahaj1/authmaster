@@ -116,22 +116,23 @@ export default class UserService {
     }
 
     static async loginUser(email: any, password: any) {
-        const user = await User.verifyCredentials(email, password)
-        if (!user) {
+        try {
+            const user = await User.verifyCredentials(email, password);
+            if (!user) {
+                return { error: true, error_message: 'Invalid credentials', data: [] };
+            }
+            const token = await User.accessTokens.create(user)
             return {
-                error: true,
-                error_message: 'User not Found',
-                data: []
+                error: false,
+                error_message: '',
+                data: {
+                    user, token
+                }
             }
+        } catch (err) {
+            return { error: true, error_message: 'Invalid credentials', data: [] };
         }
-        const token = await User.accessTokens.create(user)
-        return {
-            error: false,
-            error_message: '',
-            data: {
-                user, token
-            }
-        }
+
     }
 
     static async logoutUser(auth: any) {

@@ -5,7 +5,7 @@ import { RegisterApi } from '../../api/userAuth/invokeRegister.api';
 import { useNavigate } from 'react-router-dom';
 
 export default function Register() {
-    const navigate = useNavigate()
+  const navigate = useNavigate();
   const { handleSubmit, control, formState: { errors, isSubmitting } } = useForm({
     defaultValues: {
       username: '',
@@ -15,7 +15,17 @@ export default function Register() {
   });
 
   const onSubmit = async (data) => {
-    const response = await RegisterApi(data, navigate);
+    await RegisterApi(data, navigate);
+  };
+
+
+  const inputFieldSX = {
+    '& .MuiOutlinedInput-root.Mui-focused fieldset': {
+      borderColor: '#850E35',
+    },
+    '& .MuiInputLabel-root.MuiFormLabel-root': {
+      color: '#666',
+    }
   };
 
   return (
@@ -28,6 +38,7 @@ export default function Register() {
           <Typography variant="h4" align="center" gutterBottom>
             Register
           </Typography>
+
           <Stack spacing={2} component="form" onSubmit={handleSubmit(onSubmit)}>
             <Controller
               name="username"
@@ -40,6 +51,7 @@ export default function Register() {
                   fullWidth
                   error={!!errors.username}
                   helperText={errors.username?.message}
+                  sx={inputFieldSX}
                 />
               )}
             />
@@ -58,6 +70,7 @@ export default function Register() {
                   fullWidth
                   error={!!errors.email}
                   helperText={errors.email?.message}
+                  sx={inputFieldSX}
                 />
               )}
             />
@@ -74,16 +87,25 @@ export default function Register() {
                   fullWidth
                   error={!!errors.password}
                   helperText={errors.password?.message}
+                  sx={inputFieldSX}
                 />
               )}
             />
-
-            <Button type="submit" variant="contained" fullWidth disabled={isSubmitting}>
+            <Button
+              type="submit"
+              variant="contained"
+              fullWidth
+              disabled={isSubmitting}
+              sx={{
+                background: "#850E35",
+                '&:hover': { background: "#a00f45" }
+              }}
+            >
               {isSubmitting ? "Submitting..." : "Register"}
             </Button>
 
             <Typography align="center" variant="body2">
-              Already signed up? <Link href="/login">Login</Link>
+              Already signed up? <Link href="/login" sx={{ color: '#850E35' }}>Login</Link>
             </Typography>
           </Stack>
         </CardContent>

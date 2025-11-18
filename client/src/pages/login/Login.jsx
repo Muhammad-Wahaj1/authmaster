@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { LoginApi } from '../../api/userAuth/invokeLogin.api';
 
 export default function Login() {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const { handleSubmit, control, formState: { errors, isSubmitting } } = useForm({
     defaultValues: {
       email: '',
@@ -14,7 +14,19 @@ export default function Login() {
   });
 
   const onSubmit = async (data) => {
-    const response = await LoginApi(data, navigate);  
+    await LoginApi(data, navigate);
+  };
+
+  const inputFieldSX = {
+    '& .MuiOutlinedInput-root.Mui-focused fieldset': {
+      borderColor: '#850E35',
+    },
+    '& .MuiInputLabel-root.Mui-focused': {
+      color: '#000', 
+    },
+    '& .MuiInputLabel-root.MuiFormLabel-root': {
+      color: '#666', 
+    }
   };
 
   return (
@@ -27,6 +39,7 @@ export default function Login() {
           <Typography variant="h4" align="center" gutterBottom>
             Login
           </Typography>
+
           <Stack spacing={2} component="form" onSubmit={handleSubmit(onSubmit)}>
             <Controller
               name="email"
@@ -43,6 +56,7 @@ export default function Login() {
                   fullWidth
                   error={!!errors.email}
                   helperText={errors.email?.message}
+                  sx={inputFieldSX}
                 />
               )}
             />
@@ -50,7 +64,7 @@ export default function Login() {
             <Controller
               name="password"
               control={control}
-              rules={{ required: "Password is required", minLength: { value: 6, message: "Minimum 6 characters" } }}
+              rules={{ required: "Password is required" }}
               render={({ field }) => (
                 <TextField
                   {...field}
@@ -59,16 +73,33 @@ export default function Login() {
                   fullWidth
                   error={!!errors.password}
                   helperText={errors.password?.message}
+                  sx={inputFieldSX}
                 />
               )}
             />
 
-            <Button type="submit" variant="contained" fullWidth disabled={isSubmitting}>
+
+            <Typography align="right" variant="body2">
+              <Link href="/forgot-password" underline="hover" sx={{ color: '#850E35' }}>
+                Forgot Password?
+              </Link>
+            </Typography>
+
+            <Button
+              type="submit"
+              variant="contained"
+              fullWidth
+              disabled={isSubmitting}
+              sx={{
+                background: "#850E35",
+                '&:hover': { background: "#a00f45" }
+              }}
+            >
               {isSubmitting ? "Logging in..." : "Login"}
             </Button>
 
             <Typography align="center" variant="body2">
-              Don't have an account? <Link href="/register">Register</Link>
+              Don't have an account? <Link href="/register" sx={{ color: '#850E35' }}>Register</Link>
             </Typography>
           </Stack>
         </CardContent>
