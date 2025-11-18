@@ -212,8 +212,11 @@ export default class UserService {
 
         user.password = password
         await user.save()
-        targetUser.isUsed = true
-        await targetUser.save()
+        await PasswordReset
+            .query()
+            .where('email', email)
+            .andWhere('isUsed', false)
+            .update({ isUsed: true });
         return {
             error: false,
             error_message: '',

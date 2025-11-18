@@ -139,7 +139,7 @@ export default class UsersController {
             const { password } = request.only(['password'])
             const { error, error_message, data } = await UserService.resetpass(params.token,password)
             if (error) {
-                return response.ok(errorResponse({ message: error_message, data }))
+                return response.badRequest(errorResponse({ message: error_message, data }))
             }
             return response.ok(successResponse({ message: "Password Reset Successfully", data: data }))
         } catch (err: any) {

@@ -2,7 +2,7 @@ import { toast } from "react-hot-toast";
 import apiRequest from "../../utils/api_Handler";
 
 
-export const ResetApi = async (data,token,navigate) => {
+export const ResetApi = async (data, token, navigate) => {
     try {
         const response = await apiRequest({
             url: `/users/reset-password/${token}`,
