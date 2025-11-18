@@ -3,6 +3,8 @@ import Login from './pages/login/Login';
 import Register from './pages/register/Register';
 import Dashboard from './pages/dashboard/Dashboard';
 import useUserToken from './context/userTokenStore';
+import ForgotPassword from './pages/forgotPassword/ForgotPassword';
+import ResetPassword from './pages/resetPassword/ResetPassword';
 
 const ProtectedRoute = ({ isAuthenticated }) => {
   if (!isAuthenticated) return <Navigate to="/login" replace />;
@@ -20,6 +22,9 @@ export default function AppRoutes() {
 
   return (
     <Routes>
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/reset-password/:token" element={<ResetPassword />} />
+
       <Route element={<ProtectedRoute isAuthenticated={isAuthenticated} />}>
         <Route path="/" element={<Dashboard />} />
       </Route>
@@ -28,6 +33,8 @@ export default function AppRoutes() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
       </Route>
+
+
 
       <Route path="*" element={<Navigate to={isAuthenticated ? "/" : "/login"} replace />} />
     </Routes>

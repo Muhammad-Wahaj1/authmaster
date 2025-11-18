@@ -59,6 +59,7 @@
     "adonis-lucid-soft-deletes": "^2.1.0",
     "luxon": "^3.7.2",
     "mysql2": "^3.15.3",
+    "nodemailer": "^7.0.10",
     "reflect-metadata": "^0.2.2"
   },
   "hotHook": {
