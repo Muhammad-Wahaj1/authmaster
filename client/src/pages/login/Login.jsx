@@ -99,7 +99,7 @@ export default function Login() {
             </Button>
 
             <Typography align="center" variant="body2">
-              Don't have an account? <Link href="/register" sx={{ color: '#850E35' }}>Register</Link>
+              Don't have an account? <Link href="/register" sx={{ color: '#850E35', textDecorationColor: '#666666DE' }}>Register</Link>
             </Typography>
           </Stack>
         </CardContent>

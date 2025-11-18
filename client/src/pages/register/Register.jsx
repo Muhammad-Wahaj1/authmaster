@@ -105,7 +105,7 @@ export default function Register() {
             </Button>
 
             <Typography align="center" variant="body2">
-              Already signed up? <Link href="/login" sx={{ color: '#850E35' }}>Login</Link>
+              Already signed up? <Link href="/login" sx={{ color: '#850E35', textDecorationColor: '#666666DE' }}>Login</Link>
             </Typography>
           </Stack>
         </CardContent>
