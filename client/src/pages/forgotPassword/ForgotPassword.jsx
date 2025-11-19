@@ -6,7 +6,7 @@ import { ForgotApi } from "../../api/userAuth/invokeForgotpassword.api";
 export default function ForgotPassword() {
     const [loading, setLoading] = useState(false);
 
-    const { handleSubmit, control } = useForm({
+    const { handleSubmit, control, formState:{isSubmitting} } = useForm({
         defaultValues: {
             email: "",
         },
@@ -23,9 +23,7 @@ export default function ForgotPassword() {
 
     const onSubmit = async(data) => {
         console.log("Forgot password request:", data);
-        setLoading(true);
         const response = await ForgotApi(data)
-        setLoading(false);
     };
 
     return (
@@ -59,8 +57,8 @@ export default function ForgotPassword() {
                             )}
                         />
 
-                        <Button type="submit" variant="contained" fullWidth sx={{ background: "#850E35" }}>
-                           {loading ? "Sending..." : "Send Reset Link"}
+                        <Button type="submit" variant="contained" disabled={isSubmitting} fullWidth sx={{ background: "#850E35" }}>
+                           {isSubmitting ? "Sending..." : "Send Reset Link"}
                         </Button>
                     </Stack>
                 </CardContent>
