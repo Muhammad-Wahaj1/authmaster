@@ -1,47 +1,98 @@
-import { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { AgGridReact } from "ag-grid-react";
 import { AllCommunityModule, ModuleRegistry } from "ag-grid-community";
 import "ag-grid-community/styles/ag-theme-alpine.css";
-import { Box,Typography } from "@mui/material";
+import { Box, IconButton, Tooltip } from "@mui/material";
+import EditIcon from "@mui/icons-material/Edit";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import DeleteIcon from "@mui/icons-material/Delete";
+import { updateTasks } from "../../api/tasks/invokeUpdateTask.api";
+import { deleteTasks } from "../../api/tasks/invokeDeleteTask.api";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
-export const TaskTable = ({rowData, loading}) => {
+export const TaskTable = ({ rowData, loading, setReload }) => {
+  const handleEdit = async (task) => {
+    const newTitle = prompt("Enter new title", task.title);
+    if (!newTitle || !newTitle.trim()) return;
 
+    await updateTasks(task.id, { title: newTitle });
+    setReload(prev => !prev);
+  };
+
+  const handleComplete = async (taskId) => {
+    await updateTasks(taskId, { status: "completed" });
+    setReload(prev => !prev);
+  };
+
+  const handleDelete = async (taskId) => {
+    if (window.confirm("Are you sure you want to delete this task?")) {
+      await deleteTasks(taskId);
+      setReload(prev => !prev);
+    }
+  };
 
   const [colDefs] = useState([
     { field: "title", headerName: "Task Title", sortable: true, filter: true },
     { field: "status", headerName: "Status", sortable: true, filter: true },
     { field: "createdAt", headerName: "Created At", sortable: true },
     { field: "updatedAt", headerName: "Updated At", sortable: true },
+    {
+      headerName: "Actions",
+      field: "actions",
+      width: 150,
+      cellRenderer: (params) => {
+        const { data } = params;
+
+        return (
+          <Box sx={{ display: "flex", gap: 0.5, alignItems: "center" }}>
+            <Tooltip title="Edit Task">
+              <IconButton
+                size="small"
+                onClick={() => handleEdit(data)}
+                sx={{ color: "#1976d2" }}
+              >
+                <EditIcon fontSize="small" />
+              </IconButton>
+            </Tooltip>
+
+            <Tooltip title={data.status === "completed" ? "Already Completed" : "Mark as Complete"}>
+              <span>
+                <IconButton
+                  size="small"
+                  onClick={() => handleComplete(data.id)}
+                  sx={{ color: "green" }}
+                  disabled={data.status === "completed"}
+                >
+                  <CheckCircleIcon fontSize="small" />
+                </IconButton>
+              </span>
+            </Tooltip>
+
+            <Tooltip title="Delete Task">
+              <IconButton
+                size="small"
+                onClick={() => handleDelete(data.id)}
+                sx={{ color: "red" }}
+              >
+                <DeleteIcon fontSize="small" />
+              </IconButton>
+            </Tooltip>
+          </Box>
+        );
+      },
+    },
   ]);
 
-  
-
   return (
-  <Box
-    sx={{
-      mt: 2,
-    }}
-  >
-    <Box className="ag-theme-alpine" sx={{ height: 400, width: "85%" }}>
+    <div className="ag-theme-alpine" style={{ height: 500, width: "100%" }}>
       {loading ? (
-        <Typography align="center">Loading tasks...</Typography>
+        <p style={{ textAlign: "center" }}>Loading tasks...</p>
       ) : rowData.length === 0 ? (
-        <Box
-          sx={{
-            height: "100%",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <Typography>No task added</Typography>
-        </Box>
+        <p style={{ textAlign: "center" }}>No task added</p>
       ) : (
         <AgGridReact rowData={rowData} columnDefs={colDefs} />
       )}
-    </Box>
-  </Box>
-);
+    </div>
+  );
 };

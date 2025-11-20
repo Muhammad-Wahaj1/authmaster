@@ -3,14 +3,13 @@ import apiRequest from "../../utils/api_Handler";
 import useUserToken from "../../context/userTokenStore";
 
 
-export const updateTasks = async (taskid) => {
+export const deleteTasks = async (taskid) => {
     try {
         const { userToken } = useUserToken.getState();
 
         const response = await apiRequest({
             url: `/tasks/${taskid}`,
             method: 'DELETE',
-            data,
             headers: {
                 Authorization: `Bearer ${userToken}`,
             },

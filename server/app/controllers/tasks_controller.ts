@@ -2,12 +2,14 @@
 import type { HttpContext } from '@adonisjs/core/http'
 import { errorResponse, successResponse } from '../helpers/response_helper.js'
 import TaskService from '#services/task_services'
+import { createTaskValidator, updateTaskValidator } from '#validators/task'
 
 export default class TaskController {
     async create({ request, auth, response }: HttpContext) {
         try {
             const userId = auth.user!.id
-            const {title} = request.only(['title'])
+            
+            const {title} = await request.validateUsing(createTaskValidator)
 
             const serviceResponse = await TaskService.createTask( title, userId )
             return response.ok(successResponse(serviceResponse))
@@ -37,7 +39,7 @@ export default class TaskController {
     async update({ request, params, auth, response }: HttpContext) {
         try {
             const userId = auth.user!.id
-            const taskdata = request.only(['title', 'status'])
+            const taskdata = await request.validateUsing(updateTaskValidator)
 
             const serviceResponse = await TaskService.updateTask(params.id, taskdata, userId)
 

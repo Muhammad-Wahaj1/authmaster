@@ -44,7 +44,6 @@ class TaskService {
                 .where('id', taskid)
                 .where('userId', userId)
                 .first()
-
             if (!task) {
                 return {
                     error: true,
@@ -52,7 +51,6 @@ class TaskService {
                     data: null
                 }
             }
-
             task.merge(taskdata)
             await task.save()
 

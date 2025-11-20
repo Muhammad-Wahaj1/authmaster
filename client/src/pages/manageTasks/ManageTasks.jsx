@@ -2,13 +2,14 @@ import { useEffect, useState } from "react";
 import { Typography, Box, TextField, Button } from "@mui/material";
 import { useForm, Controller } from "react-hook-form";
 import { createTask } from "../../api/tasks/invokeCreateTask.api";
-import { TaskTable } from "../../components/taskTable/TaskTable";
 import { getTasks } from "../../api/tasks/invokeGetTasks.api";
+import { TaskTable } from "../../components/taskTable/TaskTable";
 
 export default function ManageTasks() {
     const [rowData, setRowData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [reload, setReload] = useState(false);
+
     const { handleSubmit, control, reset } = useForm({
         defaultValues: { title: "" },
     });
@@ -16,7 +17,7 @@ export default function ManageTasks() {
     useEffect(() => {
         const fetchTasks = async () => {
             const response = await getTasks();
-            setRowData(response.length ? response : []);
+            setRowData(response);
             setLoading(false);
         };
         fetchTasks();
@@ -29,32 +30,38 @@ export default function ManageTasks() {
     };
 
     const inputFieldSX = {
-        '& .MuiOutlinedInput-root.Mui-focused fieldset': {
-            borderColor: '#850E35',
+        "& .MuiOutlinedInput-root.Mui-focused fieldset": {
+            borderColor: "#850E35",
         },
-        '& .MuiInputLabel-root.MuiFormLabel-root': {
-            color: '#666',
-        }
+        "& .MuiInputLabel-root.MuiFormLabel-root": {
+            color: "#666",
+        },
     };
 
     return (
-        <>
         <Box sx={{ p: 2 }}>
-            <Typography sx={{ fontSize: "1.5rem", my: "1rem" }} >
+            <Typography sx={{ fontSize: "1.5rem", my: "1rem", textAlign:'center' }}>
                 Manage your tasks
             </Typography>
 
             <Box
                 component="form"
                 onSubmit={handleSubmit(onSubmit)}
-                sx={{ display: "flex", gap: 1, mb: 2, justifyContent: "center",  width: '85%',  }}
+                sx={{
+                    display: "flex",
+                    gap: 1,
+                    mb: 2,
+                    justifyContent: "center",
+                    width: "100%",
+                }}
             >
                 <Controller
                     name="title"
                     control={control}
                     rules={{
                         required: "Task title is required",
-                        validate: (value) => value.trim() !== "" || "Task title cannot be empty",
+                        validate: (value) =>
+                            value.trim() !== "" || "Task title cannot be empty",
                     }}
                     render={({ field, fieldState }) => (
                         <TextField
@@ -67,6 +74,7 @@ export default function ManageTasks() {
                         />
                     )}
                 />
+
                 <Button
                     type="submit"
                     variant="contained"
@@ -76,16 +84,14 @@ export default function ManageTasks() {
                         color: "#fff",
                         fontWeight: 700,
                         px: 3,
-                        '&:hover': {
-                            backgroundColor: "#a00f45",
-                        },
+                        "&:hover": { backgroundColor: "#a00f45" },
                     }}
                 >
                     Add Task
                 </Button>
             </Box>
-            <TaskTable rowData={rowData} loading={loading} />
+
+            <TaskTable rowData={rowData} loading={loading} setReload={setReload} />
         </Box>
-        </>
     );
 }
