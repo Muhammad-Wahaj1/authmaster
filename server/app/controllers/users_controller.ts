@@ -1,6 +1,6 @@
 import type { HttpContext } from '@adonisjs/core/http'
 
-import { createUserValidator, updateUserValidator } from '#validators/user'
+import { createUserValidator, forgotPasswordValidator, loginValidator, resetPasswordValidator, updateUserValidator } from '#validators/user'
 import UserService from '#services/user_services'
 import { errorResponse, successResponse } from '../helpers/response_helper.js'
 
@@ -95,7 +95,7 @@ export default class UsersController {
 
     async login({ request, response }: HttpContext) {
         try {
-            const { email, password } = request.only(['email', 'password'])
+            const { email, password } = await request.validateUsing(loginValidator)
             const { error, error_message, data } = await UserService.loginUser(email, password)
             if (error) {
                 return response.unauthorized(errorResponse({ message: error_message, data }))
@@ -121,7 +121,7 @@ export default class UsersController {
 
     async forgotPassword({ request, response }: HttpContext) {
         try {
-            const { email } = request.only(['email'])
+            const { email } = await request.validateUsing(forgotPasswordValidator)
             const { error, error_message, data } = await UserService.forgotpass(email)
             if (error) {
                 return response.ok(errorResponse({ message: error_message, data }))
@@ -136,7 +136,7 @@ export default class UsersController {
 
     async resetPassword({ params,request, response }: HttpContext) {
         try {
-            const { password } = request.only(['password'])
+            const { password } = await request.validateUsing(resetPasswordValidator)
             const { error, error_message, data } = await UserService.resetpass(params.token,password)
             if (error) {
                 return response.badRequest(errorResponse({ message: error_message, data }))
