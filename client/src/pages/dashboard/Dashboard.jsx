@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Button, Typography, Container, Paper } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 import { LogoutApi } from "../../api/userAuth/invokeLogout.api";
 import useUserStore from "../../context/userStore";
 import { useNavigate } from "react-router-dom";
@@ -14,46 +14,44 @@ export default function Dashboard() {
   };
 
   return (
-    <Container maxWidth="sm">
-      <Paper
-        elevation={3}
+    <Box
+      sx={{
+        mt: 8,
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        gap: 3,
+        px: 2,
+      }}
+    >
+      <Typography variant="h4" component="h1">
+        Welcome,{" "}
+        <Box component="span" sx={{ color: "#850E35", textTransform: "uppercase" }}>
+          {user?.username || "USER"}
+        </Box>
+      </Typography>
+
+      <Box
         sx={{
-          mt: 8,
-          p: 4,
-          borderRadius: 3,
-          textAlign: "center",
+          display: "flex",
+          alignItems: "center",
+          gap: 1,
+          color: "#850E35",
         }}
       >
-        <Typography variant="h4" gutterBottom>
-          Welcome,{" "}
-          <Box component="span" sx={{ color: "#850E35", textTransform: "uppercase" }}>
-            {user?.username || "USER"}
-          </Box>
+        <EmailIcon />
+        <Typography variant="body1">{user?.email || "Not available"}</Typography>
+      </Box>
 
-        </Typography>
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            mb: 4,
-            color: "#850E35",
-          }}
-        >
-          <EmailIcon sx={{ mr: 1 }} />
-          <Typography variant="body1">{user?.email || "Not available"}</Typography>
-        </Box>
-
-
-        <Button
-          variant="contained"
-          color="error"
-          onClick={handleLogout}
-          sx={{ px: 4, py: 1.5, fontWeight: 600 }}
-        >
-          Logout
-        </Button>
-      </Paper>
-    </Container>
+      <Button
+        variant="contained"
+        size="small"
+        color="error"
+        onClick={handleLogout}
+        sx={{ px: 4, py: 1, fontWeight: 600, fontSize: '1rem' }}
+      >
+        Logout
+      </Button>
+    </Box>
   );
 }
