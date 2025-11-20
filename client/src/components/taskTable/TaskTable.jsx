@@ -1,68 +1,47 @@
 import { useState } from "react";
 import { AgGridReact } from "ag-grid-react";
 import { AllCommunityModule, ModuleRegistry } from "ag-grid-community";
-import "ag-grid-community/styles/ag-theme-alpine.css"; // Only theme CSS
+import "ag-grid-community/styles/ag-theme-alpine.css";
+import { Box,Typography } from "@mui/material";
 
-// Register all Community features
 ModuleRegistry.registerModules([AllCommunityModule]);
 
-export const TaskTable = () => {
-    const [rowData, setRowData] = useState([
-        {
-            title: "Coding",
-            description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestiae est laboriosam',
-            status: "Pending",
-            createdAt: "2025-11-19 09:00",
-            updatedAt: "2025-11-19 10:00",
-        },
-        {
-            title: "Fix API integration",
-            description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestiae est laboriosam',
-            status: "Completed",
-            createdAt: "2025-11-18 14:00",
-            updatedAt: "2025-11-18 16:00",
-        },
-        {
-            title: "Add validation for forms",
-            description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestiae est laboriosam',
-            status: "Pending",
-            createdAt: "2025-11-19 11:00",
-            updatedAt: "2025-11-19 11:30",
-        },
-        {
-            title: "Add validation for forms",
-            description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestiae est laboriosam',
-            status: "Pending",
-            createdAt: "2025-11-19 11:00",
-            updatedAt: "2025-11-19 11:30",
-        },
-        {
-            title: "Add validation for forms",
-            description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestiae est laboriosam',
-            status: "Pending",
-            createdAt: "2025-11-19 11:00",
-            updatedAt: "2025-11-19 11:30",
-        },
-        {
-            title: "Add validation for forms",
-            description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestiae est laboriosam',
-            status: "Pending",
-            createdAt: "2025-11-19 11:00",
-            updatedAt: "2025-11-19 11:30",
-        },
-    ]);
+export const TaskTable = ({rowData, loading}) => {
 
-    const [colDefs, setColDefs] = useState([
-        { field: "title", headerName: "Task Title", sortable: true, filter: true },
-        { field: "description", headerName: "Description", sortable: true , filter: true},
-        { field: "status", headerName: "Status", sortable: true, filter: true },
-        { field: "createdAt", headerName: "Created At", sortable: true },
-        { field: "updatedAt", headerName: "Updated At", sortable: true },
-    ]);
 
-    return (
-        <div className="ag-theme-alpine" style={{ height: 500, width: "100%" }}>
-            <AgGridReact rowData={rowData} columnDefs={colDefs} />
-        </div>
-    );
+  const [colDefs] = useState([
+    { field: "title", headerName: "Task Title", sortable: true, filter: true },
+    { field: "status", headerName: "Status", sortable: true, filter: true },
+    { field: "createdAt", headerName: "Created At", sortable: true },
+    { field: "updatedAt", headerName: "Updated At", sortable: true },
+  ]);
+
+  
+
+  return (
+  <Box
+    sx={{
+      mt: 2,
+    }}
+  >
+    <Box className="ag-theme-alpine" sx={{ height: 400, width: "85%" }}>
+      {loading ? (
+        <Typography align="center">Loading tasks...</Typography>
+      ) : rowData.length === 0 ? (
+        <Box
+          sx={{
+            height: "100%",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Typography>No task added</Typography>
+        </Box>
+      ) : (
+        <AgGridReact rowData={rowData} columnDefs={colDefs} />
+      )}
+    </Box>
+  </Box>
+);
 };
