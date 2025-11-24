@@ -9,9 +9,6 @@ export const RegisterApi = async (data,navigate) => {
             method: 'POST',
             data
         });
-
-
-
         if (response?.status) {
             toast.success(response.message || "Registration successful!");
             navigate('/login')

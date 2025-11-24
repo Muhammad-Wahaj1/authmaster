@@ -8,17 +8,8 @@ router.group(() => {
   router.post('/login', [UsersController, 'login'])
   router.post('/forgot-password', [UsersController, 'forgotPassword'])
   router.post('/reset-password/:token', [UsersController, 'resetPassword'])
-
+  router.patch('/password', [UsersController, 'updatePassword']).use(middleware.auth({ guards: ['api'] }))
+  router.post('/logout', [UsersController, 'logout']).use(middleware.auth({ guards: ['api'] }))
 })
   .prefix('/users')
 
-router.group(() => {
-  router.get('/', [UsersController, 'index'])
-  router.get('/:id', [UsersController, 'show'])
-  router.put('/:id', [UsersController, 'update'])
-  router.delete('/:id', [UsersController, 'destroy'])
-  router.patch('/password', [UsersController, 'updatePassword'])
-  router.post('/logout', [UsersController, 'logout'])
-})
-  .prefix('/users')
-  .use(middleware.auth({ guards: ['api'] }))             

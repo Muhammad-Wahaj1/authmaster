@@ -167,8 +167,8 @@ export default class UserService {
             host: 'smtp.ethereal.email',
             port: 587,
             auth: {
-                user: 'nella.heidenreich10@ethereal.email',
-                pass: 'PTMKGSecypwcJpJdfm'
+                user: 'evie.anderson17@ethereal.email',
+                pass: 'vb1cNc2FG4hwcxKQXw'
             }
         });
         const resetLink = `http://localhost:5173/reset-password/${token}`
