@@ -1,46 +1,41 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Typography, Box, TextField, Button } from "@mui/material";
 import { useForm, Controller } from "react-hook-form";
+import { useDispatch, useSelector } from "react-redux";
 import { createTask } from "../../api/tasks/invokeCreateTask.api";
-import { getTasks } from "../../api/tasks/invokeGetTasks.api";
 import { TaskTable } from "../../components/taskTable/TaskTable";
+import { addTaskLocal, fetchTasks } from "../../../../server/redux/slices/taskSlice";
 
 export default function ManageTasks() {
-    const [rowData, setRowData] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [reload, setReload] = useState(false);
+    const dispatch = useDispatch();
 
-    const { handleSubmit, control, reset } = useForm({
-        defaultValues: { title: "" },
-    });
+    const rowData = useSelector((state) => state.tasks.list);
+    const loading = useSelector((state) => state.tasks.loading);
+
+    const { handleSubmit, control, reset } = useForm({ defaultValues: { title: "" } });
 
     useEffect(() => {
-        const fetchTasks = async () => {
-            const response = await getTasks();
-            setRowData(response);
-            setLoading(false);
-        };
-        fetchTasks();
-    }, [reload]);
+        if (rowData.length === 0) {
+            dispatch(fetchTasks());
+        }
+    }, [dispatch, rowData.length]);
 
     const onSubmit = async (data) => {
-        await createTask(data);
+        const newTask = await createTask(data);
+
+        dispatch(addTaskLocal(newTask));
+
         reset();
-        setReload(prev => !prev);
     };
 
     const inputFieldSX = {
-        "& .MuiOutlinedInput-root.Mui-focused fieldset": {
-            borderColor: "#850E35",
-        },
-        "& .MuiInputLabel-root.MuiFormLabel-root": {
-            color: "#666",
-        },
+        "& .MuiOutlinedInput-root.Mui-focused fieldset": { borderColor: "#850E35" },
+        "& .MuiInputLabel-root.MuiFormLabel-root": { color: "#666" },
     };
 
     return (
         <Box sx={{ p: 2 }}>
-            <Typography sx={{ fontSize: "1.5rem", my: "1rem", textAlign:'center' }}>
+            <Typography sx={{ fontSize: "1.5rem", my: "1rem", textAlign: "center" }}>
                 Manage your tasks
             </Typography>
 
@@ -60,8 +55,7 @@ export default function ManageTasks() {
                     control={control}
                     rules={{
                         required: "Task title is required",
-                        validate: (value) =>
-                            value.trim() !== "" || "Task title cannot be empty",
+                        validate: (v) => v.trim() !== "" || "Task title cannot be empty",
                     }}
                     render={({ field, fieldState }) => (
                         <TextField
@@ -91,7 +85,7 @@ export default function ManageTasks() {
                 </Button>
             </Box>
 
-            <TaskTable rowData={rowData} loading={loading} setReload={setReload} />
+            <TaskTable rowData={rowData} loading={loading} />
         </Box>
     );
 }

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { AgGridReact } from "ag-grid-react";
 import { AllCommunityModule, ModuleRegistry } from "ag-grid-community";
 import "ag-grid-community/styles/ag-theme-alpine.css";
@@ -6,30 +6,40 @@ import { Box, IconButton, Tooltip } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { useDispatch } from "react-redux";
+
 import { updateTasks } from "../../api/tasks/invokeUpdateTask.api";
 import { deleteTasks } from "../../api/tasks/invokeDeleteTask.api";
+import { removeTaskLocal, updateTaskLocal } from "../../../../server/redux/slices/taskSlice";
+
+
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
-export const TaskTable = ({ rowData, loading, setReload }) => {
+export const TaskTable = ({ rowData, loading }) => {
+  const dispatch = useDispatch();
+
   const handleEdit = async (task) => {
     const newTitle = prompt("Enter new title", task.title);
     if (!newTitle || !newTitle.trim()) return;
 
-    await updateTasks(task.id, { title: newTitle });
-    setReload(prev => !prev);
+    const updated = await updateTasks(task.id, { title: newTitle });
+
+    dispatch(updateTaskLocal(updated));
   };
 
   const handleComplete = async (taskId) => {
-    await updateTasks(taskId, { status: "completed" });
-    setReload(prev => !prev);
+    const updated = await updateTasks(taskId, { status: "completed" });
+
+    dispatch(updateTaskLocal(updated));
   };
 
   const handleDelete = async (taskId) => {
-    if (window.confirm("Are you sure you want to delete this task?")) {
-      await deleteTasks(taskId);
-      setReload(prev => !prev);
-    }
+    if (!window.confirm("Are you sure you want to delete this task?")) return;
+
+    await deleteTasks(taskId);
+
+    dispatch(removeTaskLocal(taskId));
   };
 
   const [colDefs] = useState([
